@@ -74,11 +74,9 @@ class MovingBall:
         except ValueError:
             pass
 
-    def start_ball(self):
-        self.move_ball()
-
-    def stop_ball(self):
-        pass
+    def set_initial_speed(self, initial_vx, initial_vy):
+        self.entry_vx.insert(0, str(initial_vx))
+        self.entry_vy.insert(0, str(initial_vy))
 
 # Создание окна приложения
 root = tk.Tk()
@@ -113,5 +111,10 @@ apply_button.grid(row=2, columnspan=2)
 
 ball.entry_vx = entry_vx
 ball.entry_vy = entry_vy
+
+# Установка начальных значений скорости в поля ввода
+initial_vx = 3
+initial_vy = 0
+ball.set_initial_speed(initial_vx, initial_vy)
 
 root.mainloop()
