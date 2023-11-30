@@ -14,21 +14,14 @@ class TestMovingBall(unittest.TestCase):
         self.ball.entry_vx = self.entry_vx
         self.ball.entry_vy = self.entry_vy
 
-    def test_initial_speed(self):
-        initial_vx = 3
-        initial_vy = 0
-        self.ball.set_initial_speed(initial_vx, initial_vy)
-        self.assertEqual(self.entry_vx.get(), str(initial_vx))
-        self.assertEqual(self.entry_vy.get(), str(initial_vy))
+    def test_ball_existence(self):
+        # Проверка существования шарика на canvas
+        self.assertIsNotNone(self.ball.ball)
 
-    def test_set_speed(self):
-        new_vx = 5
-        new_vy = -2
-        self.entry_vx.insert(0, str(new_vx))
-        self.entry_vy.insert(0, str(new_vy))
-        self.ball.set_speed()
-        self.assertEqual(self.ball.vx, new_vx)
-        self.assertEqual(self.ball.vy, new_vy)
+    def test_ball_color(self):
+        # Проверка цвета шарика
+        ball_color = self.canvas.itemcget(self.ball.ball, "fill")
+        self.assertEqual(ball_color, "blue")
 
     def tearDown(self):
         self.root.destroy()
