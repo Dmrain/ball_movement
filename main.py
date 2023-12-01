@@ -1,5 +1,6 @@
 import math
 import tkinter as tk
+from tkinter import messagebox
 
 
 class MovingBall:
@@ -23,6 +24,7 @@ class MovingBall:
         self.canvas.create_line(self.x1, self.y1, self.x2, self.y2)
         self.canvas.create_line(self.x2, self.y2, self.x3, self.y3)
         self.canvas.create_line(self.x3, self.y3, self.x1, self.y1)
+        self.is_moving = False
 
     def distance_to_segment(self, x, y, x1, y1, x2, y2):
         dx = x2 - x1
@@ -40,27 +42,28 @@ class MovingBall:
             return math.sqrt((x - xp) ** 2 + (y - yp) ** 2)
 
     def move_ball(self):
-        d1 = self.distance_to_segment(self.x, self.y, self.x1, self.y1, self.x2, self.y2)
-        d2 = self.distance_to_segment(self.x, self.y, self.x2, self.y2, self.x3, self.y3)
-        d3 = self.distance_to_segment(self.x, self.y, self.x3, self.y3, self.x1, self.y1)
-        if d1 < self.r or d2 < self.r or d3 < self.r:
-            if d1 < self.r:
-                nx, ny = self.y2 - self.y1, self.x1 - self.x2
-            elif d2 < self.r:
-                nx, ny = self.y3 - self.y2, self.x2 - self.x3
-            else:
-                nx, ny = self.y1 - self.y3, self.x3 - self.x1
-            d = math.sqrt(nx ** 2 + ny ** 2)
-            nx /= d
-            ny /= d
-            dot = self.vx * nx + self.vy * ny
-            self.vx -= 2 * dot * nx
-            self.vy -= 2 * dot * ny
-        self.x += self.vx
-        self.y += self.vy
-        self.canvas.move(self.ball, self.vx, self.vy)
-        self.canvas.update()
-        self.canvas.after(30, self.move_ball)
+        if self.is_moving:  # Проверка на состояние движения
+            d1 = self.distance_to_segment(self.x, self.y, self.x1, self.y1, self.x2, self.y2)
+            d2 = self.distance_to_segment(self.x, self.y, self.x2, self.y2, self.x3, self.y3)
+            d3 = self.distance_to_segment(self.x, self.y, self.x3, self.y3, self.x1, self.y1)
+            if d1 < self.r or d2 < self.r or d3 < self.r:
+                if d1 < self.r:
+                    nx, ny = self.y2 - self.y1, self.x1 - self.x2
+                elif d2 < self.r:
+                    nx, ny = self.y3 - self.y2, self.x2 - self.x3
+                else:
+                    nx, ny = self.y1 - self.y3, self.x3 - self.x1
+                d = math.sqrt(nx ** 2 + ny ** 2)
+                nx /= d
+                ny /= d
+                dot = self.vx * nx + self.vy * ny
+                self.vx -= 2 * dot * nx
+                self.vy -= 2 * dot * ny
+            self.x += self.vx
+            self.y += self.vy
+            self.canvas.move(self.ball, self.vx, self.vy)
+            self.canvas.update()
+            self.canvas.after(30, self.move_ball)
 
     def clear_ball(self):
         self.canvas.delete('all')
@@ -73,6 +76,23 @@ class MovingBall:
             self.vy = new_vy
         except ValueError:
             pass
+
+    def start_movement(self):
+        if self.entry_vx.get() and self.entry_vy.get():  # Проверяем, заполнены ли поля скорости
+            self.vx = float(self.entry_vx.get())
+            self.vy = float(self.entry_vy.get())
+        else:
+            messagebox.showwarning("Предупреждение", "Пожалуйста, заполните все поля.")
+            return
+
+        self.is_moving = True
+        self.move_ball()
+    def stop_movement(self):
+        self.is_moving = False
+        self.vx, self.vy = 0, 0
+        self.entry_vx.delete(0, tk.END)
+        self.entry_vy.delete(0, tk.END)
+        self.set_initial_speed(3, 0)
 
     def set_initial_speed(self, initial_vx, initial_vy):
         self.entry_vx.insert(0, str(initial_vx))
@@ -92,22 +112,24 @@ vx, vy = 3, 0
 ball = MovingBall(canvas, 40, 40, 260, 40, 150, 200, x, y, vx, vy)
 ball.move_ball()
 
-# Добавление элементов интерфейса для изменения скорости
-frame = tk.Frame(root)
-frame.pack()
+# Добавление кнопок "Старт" и "Стоп" и остального интерфейса
 
-label_vx = tk.Label(frame, text="Скорость по X:")
-label_vx.grid(row=0, column=0)
-entry_vx = tk.Entry(frame)
-entry_vx.grid(row=0, column=1)
+apply_button = tk.Button(root, text="Cтарт", command=ball.start_movement)
+apply_button.pack()
 
-label_vy = tk.Label(frame, text="Скорость по Y:")
-label_vy.grid(row=1, column=0)
-entry_vy = tk.Entry(frame)
-entry_vy.grid(row=1, column=1)
+stop_button = tk.Button(root, text="Стоп", command=ball.stop_movement)
+stop_button.pack()
 
-apply_button = tk.Button(frame, text="Применить", command=ball.set_speed)
-apply_button.grid(row=2, columnspan=2)
+label_vx = tk.Label(root, text="Скорость по X:")
+label_vx.pack()
+entry_vx = tk.Entry(root)
+entry_vx.pack()
+
+label_vy = tk.Label(root, text="Скорость по Y:")
+label_vy.pack()
+entry_vy = tk.Entry(root)
+entry_vy.pack()
+
 
 ball.entry_vx = entry_vx
 ball.entry_vy = entry_vy
