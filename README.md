@@ -12,6 +12,7 @@
 > 
 ## Демонстрация выполнения программы
 
+![GIF](https://github.com/Dmrain/ball_movement/blob/master/gifs/animation.gif)
 
 ## Установка и запуск
 
