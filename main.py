@@ -78,6 +78,7 @@ class MovingBall:
                 dot = self.vx * nx + self.vy * ny
                 self.vx -= 2 * dot * nx
                 self.vy -= 2 * dot * ny
+
             self.x += self.vx
             self.y += self.vy
             self.canvas.move(self.ball, self.vx, self.vy)
@@ -99,6 +100,7 @@ class MovingBall:
             new_vy = float(self.entry_vy.get())
             self.vx = new_vx
             self.vy = new_vy
+
         except ValueError:
             pass
 
@@ -164,7 +166,6 @@ label_vy = tk.Label(root, text="Скорость по Y:")
 label_vy.pack()
 entry_vy = tk.Entry(root)
 entry_vy.pack()
-
 
 ball.entry_vx = entry_vx
 ball.entry_vy = entry_vy
