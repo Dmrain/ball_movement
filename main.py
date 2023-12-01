@@ -5,6 +5,14 @@ from tkinter import messagebox
 
 class MovingBall:
     def __init__(self, canvas, x1, y1, x2, y2, x3, y3, x, y, vx, vy):
+        """
+            Инициализация шарика и треугольника на холсте.
+            Параметры:
+            canvas: Объект Canvas для отображения элементов.
+            x1, y1, x2, y2, x3, y3 (int): Координаты вершин треугольника.
+            x, y (int): Координаты центра шарика.
+            vx, vy (float): Компоненты скорости шарика по x и y.
+        """
         self.canvas = canvas
         self.x1 = x1 + 40
         self.y1 = y1 + 40
@@ -18,8 +26,8 @@ class MovingBall:
         self.vy = vy
         self.r = 5
 
-        self.ball = self.canvas.create_oval(self.x - self.r, self.y - self.r, self.x + self.r, self.y + self.r,
-                                            fill="blue")
+        self.ball = self.canvas.create_oval(self.x - self.r, self.y - self.r,
+                                            self.x + self.r, self.y + self.r, fill="blue")
 
         self.canvas.create_line(self.x1, self.y1, self.x2, self.y2)
         self.canvas.create_line(self.x2, self.y2, self.x3, self.y3)
@@ -27,6 +35,13 @@ class MovingBall:
         self.is_moving = False
 
     def distance_to_segment(self, x, y, x1, y1, x2, y2):
+        """
+            Данная функция ассчитывает расстояние от точки (x, y)
+            до отрезка с координатами (x1, y1) и (x2, y2).
+            Параметры:
+            x, y (int): Координаты точки.
+            x1, y1, x2, y2 (int): Координаты концов отрезка.
+        """
         dx = x2 - x1
         dy = y2 - y1
         if dx == 0 and dy == 0:
@@ -42,6 +57,10 @@ class MovingBall:
             return math.sqrt((x - xp) ** 2 + (y - yp) ** 2)
 
     def move_ball(self):
+        """
+            Функция отвечает за движение шарика и взаимодействие
+            с треугольником при столкновении.
+        """
         if self.is_moving:  # Проверка на состояние движения
             d1 = self.distance_to_segment(self.x, self.y, self.x1, self.y1, self.x2, self.y2)
             d2 = self.distance_to_segment(self.x, self.y, self.x2, self.y2, self.x3, self.y3)
@@ -66,9 +85,15 @@ class MovingBall:
             self.canvas.after(30, self.move_ball)
 
     def clear_ball(self):
+        """
+            Функция удаляет все объекты Canvas.
+        """
         self.canvas.delete('all')
 
     def set_speed(self):
+        """
+            Функция задает скорость шарика на основе данных из полей ввода.
+        """
         try:
             new_vx = float(self.entry_vx.get())
             new_vy = float(self.entry_vy.get())
@@ -78,6 +103,9 @@ class MovingBall:
             pass
 
     def start_movement(self):
+        """
+            Функция начинает движение шарика.
+        """
         if self.entry_vx.get() and self.entry_vy.get():  # Проверяем, заполнены ли поля скорости
             self.vx = float(self.entry_vx.get())
             self.vy = float(self.entry_vy.get())
@@ -88,6 +116,9 @@ class MovingBall:
         self.is_moving = True
         self.move_ball()
     def stop_movement(self):
+        """
+            Останавливает движение шарика.
+        """
         self.is_moving = False
         self.vx, self.vy = 0, 0
         self.entry_vx.delete(0, tk.END)
@@ -95,6 +126,11 @@ class MovingBall:
         self.set_initial_speed(3, 0)
 
     def set_initial_speed(self, initial_vx, initial_vy):
+        """
+            Задает начальную скорость в поля ввода.
+            Параметры:
+            initial_vx, initial_vy (int): Начальные значения скорости по x и y.
+        """
         self.entry_vx.insert(0, str(initial_vx))
         self.entry_vy.insert(0, str(initial_vy))
 
@@ -113,7 +149,6 @@ ball = MovingBall(canvas, 40, 40, 260, 40, 150, 200, x, y, vx, vy)
 ball.move_ball()
 
 # Добавление кнопок "Старт" и "Стоп" и остального интерфейса
-
 apply_button = tk.Button(root, text="Cтарт", command=ball.start_movement)
 apply_button.pack()
 
